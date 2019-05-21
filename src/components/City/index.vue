@@ -4,46 +4,23 @@
             <div class="city_hot">
                 <h2>热门城市</h2>
                 <ul class="clearfix">
-                    <li>上海</li>
+                    <li v-for="(item,i) in hotList" :key="i">{{item.nm}}</li>
                 </ul>
             </div>
-            <div class="city_sort">
-                <div>
-                    <h2>A</h2>
+            <div class="city_sort" ref="citySort">
+                <div v-for="(item,i) in cityList" :key="i" >
+                    <h2>{{item.index}}</h2>
                     <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
+                        <li v-for="(clist,i) in item.list" :key="i">{{clist.nm}}</li>
+                        
                     </ul>
                 </div>	
-                <div>
-                    <h2>A</h2>
-                    <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>A</h2>
-                    <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
-                    </ul>
-                </div>		
             </div>
         </div>
         <div class="city_index">
             <ul>
-                <li>A</li>
-                <li>B</li>
-                <li>C</li>
-                <li>D</li>
-                <li>E</li>
+                <li v-for="(item,i) in cityList" :key="i" @touchstart="toIndex(i)">{{item.index}}</li>
+                
             </ul>
         </div>
         
@@ -52,16 +29,99 @@
 
 <script>
 export default {
-    name:'City'
+    name:'City',
+    data() {
+        return {
+            cityList:[],
+            hotList:[]
+        }
+    },
+    mounted() {
+        
+        this.axios.get('/api/cityList').then((data)=>{
+            //console.log(data)
+            var msg = data.data.msg;
+            //console.log(msg)
+            //console.log(data.data.data.cities);
+            if (msg === 'ok' ) {
+                var cities = data.data.data.cities;
+                //[ {index:'A',list:[{nm:'阿拉善',id:111}] } ]
+                var {cityList,hotList} = this.formatCityList(cities)
+                this.cityList = cityList;
+                this.hotList = hotList;
+            }
+            console.log(this.cityList);
+        })
+        
+    },
+    methods: {
+        formatCityList(cities){
+            var cityList = [];
+            var hotList = [];
+
+            for(var i = 0;i<cities.length;i++){
+                if(cities[i].isHot===1){
+                    hotList.push(cities[i])
+                }
+            }
+
+            for(var i = 0;i<cities.length;i++){
+                var firstLetter = cities[i].py.substring(0,1).toUpperCase();
+                
+                if(toCom(firstLetter)){//新添加index
+                    cityList.push({index:firstLetter,list:[{nm:cities[i].nm,id:cities[i].id}]})
+                }else{//累加到已有index中
+                    for (var j = 0; j < cityList.length; j++) {
+                        if (cityList[j].index === firstLetter) {
+                            cityList[j].list.push({nm:cities[i].nm,id:cities[i].id})
+                        }
+                        
+                    }
+                }
+            }
+            cityList.sort((a,b)=>{
+                if(a.index>b.index){
+                    return 1;
+                }
+                if (a.index<b.index) {
+                    return -1;
+                }
+            })
+            
+            function toCom(firstLetter){
+                for(var i=0;i<cityList.length;i++){
+                    if( cityList[i].index ===  firstLetter){
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            //console.log(cityList)
+            //console.log(hotList)
+            return {
+                cityList,
+                hotList
+            }
+
+        },
+        toIndex(i){
+            var h2 = this.$refs.citySort.getElementsByTagName('h2');
+            this.$refs.citySort.parentNode.scrollTop = h2[i].offsetTop;
+            //this.$refs.city_List.toScrollTop(-h2[i].offsetTop)
+        }
+    },
 }
 </script>
 
 <style scoped>
 #content .city_body{ 
-    
+   margin-top: 45px;
     display: flex; 
     width:100%; 
-    
+    position: absolute; 
+    top: 0; 
+    bottom: 0;
    
     }
 .city_body .city_list{ 
