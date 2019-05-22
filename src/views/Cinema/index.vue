@@ -1,6 +1,6 @@
 <template>
     <div id="main">
-        <Header title="龙猫影院"/>
+        <Header title="哈票影院"/>
         <div id="content">
             <div class="cinema_menu">
 				<router-link to="/cinema/ciList" tag="div" class="city_switch">
@@ -37,12 +37,12 @@ export default {
 <style scoped>
 #content .cinema_menu{ width: 100%; height: 45px; border-bottom:1px solid #e6e6e6; display: flex; justify-content:space-around; align-items:center; background:white;}
 .cinema_menu .city_switch.router-link-active{ 
-    color: #ef4238; 
+    color: #a7cd1a; 
     }
 .cinema_menu .brand_swtich.router-link-active{ 
-    color: #ef4238; 
+    color: #a7cd1a; 
     }
 .cinema_menu .feature_switch.router-link-active{ 
-    color: #ef4238; 
+    color: #a7cd1a; 
     }
 </style>

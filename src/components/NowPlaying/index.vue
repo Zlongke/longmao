@@ -1,9 +1,11 @@
 <template>
     <div class="movie_body" ref="movie_body">
-        
+        <Loading v-if="isLoading"></Loading>
+        <Scroller v-else :handleToScroll="handleToScroll" :handleToTouchEnd="handleToTouchEnd">
             <ul>
+                <li class="pullMsg">{{ pullMsg }}</li>
                 <li v-for="(item,i) in movieList" :key="i">
-                    <div class="pic_show"><img :src="item.img | setWH('128.180') "></div>
+                    <div class="pic_show" @tap="toDetail"><img :src="item.img | setWH('128.180') "></div>
                     <div class="info_list">
                         <h2>{{item.nm}} <img v-if="item.version" src="@/assets/maxs.png" /></h2>
                         <p>观众评分 <span class="grade">{{item.sc}}</span></p>
@@ -15,26 +17,94 @@
                     </div>
                 </li>
             </ul>
-   
+        </Scroller>
     </div>
 </template>
 
 <script>
+//import Bscroll from 'better-scroll'
 export default {
     name:'NowPlaying',
     data() {
         return {
-            movieList:[]
+            movieList:[],
+            pullMsg:'',
+            isLoading:true,
+            prevCityId:-1
         }
     },
-    mounted() {
-        this.axios.get('/api/movieOnInfoList?cityId=10').then((data)=>{
+    activated() {//keep-alive 组件激活时调用。
+        var cityId = this.$store.state.city.id
+        //如果当前城市没有改变，不往下执行发起请求，如果切换城市再往下执行。
+        if (this.prevCityId === cityId) {
+            return;
+        }
+        this.isLoading = true;
+        this.axios.get('/api/movieOnInfoList?cityId='+cityId).then((data)=>{
             var msg = data.data.msg;
             if(msg === 'ok'){
                 this.movieList = data.data.data.movieList
+                this.isLoading = false;
+                this.prevCityId = cityId;
+               /*  this.$nextTick(()=>{
+                    var scroll =  new Bscroll(this.$refs.movie_body,{
+                        tap:true,
+                        probeType:1
+                    })
+                    scroll.on('scroll',(pos)=>{
+                        //console.log("aa");
+                        if (pos.y>40) {
+                            this.pullMsg = '正在更新中...'
+                            
+                        }
+                    })
+
+                    scroll.on('touchEnd',(pos)=>{
+                        //console.log('bb');
+                        if(pos.y>40){
+                            this.axios.get('/api/movieOnInfoList?cityId=10').then((data)=>{
+                                var msg = data.data.msg;
+                                if(msg === 'ok'){
+                                    this.pullMsg = '更新成功'
+                                    setTimeout(() => {
+                                        this.movieList = data.data.data.movieList
+                                        this.pullMsg = ''
+                                    }, 1000);
+                                    
+                                }
+                            })
+                        }
+                    })
+                }) */
+                
+                
             }
-            console.log(this.movieList);
+            //console.log(this.movieList);
         })
+    },
+    methods: {
+        handleToScroll(pos){
+            if (pos.y>40) {
+                this.pullMsg = '正在更新中...'  
+            }
+        },
+        handleToTouchEnd(pos){
+            if(pos.y>40){
+                this.axios.get('/api/movieOnInfoList?cityId='+this.prevCityId).then((data)=>{
+                    var msg = data.data.msg;
+                    if(msg === 'ok'){
+                        this.pullMsg = '更新成功'
+                        setTimeout(() => {
+                            this.movieList = data.data.data.movieList
+                            this.pullMsg = ''
+                        }, 1000);
+                    }
+                })
+            }
+        },
+        toDetail(){
+            console.log(111);
+        }
     },
 }
 </script>
@@ -47,6 +117,7 @@ export default {
 .movie_body ul{ 
     margin:0 12px; 
     overflow: hidden;
+    position: relative;
     }
 .movie_body ul li{ 
     margin-top:12px; 
@@ -100,7 +171,7 @@ export default {
     height:27px; 
     line-height: 28px; 
     text-align: center; 
-    background-color: #f03d37; 
+    background-color: #a7cd1a; 
     color: #fff; 
     border-radius: 4px; 
     font-size: 12px; 
@@ -109,9 +180,22 @@ export default {
 .movie_body .btn_pre{ 
     background-color: #3c9fe6;
     }
-.movie_body .pullDown{ 
-    margin:0; 
-    padding:0; 
+
+.movie_body .pullMsg{
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+/* .movie_body .pullMsg{ 
     border:none;
-    }
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    left: 50%;
+    top: 40px;
+    margin-left: -40px;
+    background: #666;
+    color: #fff;
+    border-radius: 5px;
+    } */
 </style>

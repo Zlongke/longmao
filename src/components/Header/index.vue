@@ -10,7 +10,7 @@ export default {
      props:{
         title:{
             type:String,
-            default:'龙猫电影'
+            default:'哈票电影'
         }
     } 
 }
@@ -21,8 +21,8 @@ export default {
     width:100%;
     height:50px; 
     color: #fff; 
-    background: #e54847; 
-    border-bottom: 1px solid #e54847; 
+    background: #a7cd1a; 
+    border-bottom: 1px solid #a7cd1a; 
     position: relative;
     }
 #header h1{ 
