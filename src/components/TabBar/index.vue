@@ -49,10 +49,10 @@ export default {
     height:40px;
     }
 #footer ul li.active{ 
-    color: #f03d37;
+    color: #a7cd1a;
     }
 #footer ul li.router-link-active{ 
-    color: #f03d37;
+    color: #a7cd1a;
     }
 #footer ul i{ 
     font-size: 20px;

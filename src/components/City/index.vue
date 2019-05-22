@@ -1,25 +1,30 @@
 <template>
     <div class="city_body">
         <div class="city_list">
-            <div class="city_hot">
-                <h2>热门城市</h2>
-                <ul class="clearfix">
-                    <li v-for="(item,i) in hotList" :key="i">{{item.nm}}</li>
-                </ul>
-            </div>
-            <div class="city_sort" ref="citySort">
-                <div v-for="(item,i) in cityList" :key="i" >
-                    <h2>{{item.index}}</h2>
-                    <ul>
-                        <li v-for="(clist,i) in item.list" :key="i">{{clist.nm}}</li>
-                        
-                    </ul>
-                </div>	
-            </div>
+            <Loading v-if="isLoading"></Loading>
+            <Scroller v-else ref="city_list">
+                <div>
+                    <div class="city_hot">
+                        <h2>热门城市</h2>
+                        <ul class="clearfix">
+                            <li v-for="(item,i) in hotList" :key="i" @tap="toCity(item.nm,item.id)">{{item.nm}}</li>
+                        </ul>
+                    </div>
+                    <div class="city_sort" ref="citySort">
+                        <div v-for="(item,i) in cityList" :key="i" >
+                            <h2>{{item.index}}</h2>
+                            <ul>
+                                <li v-for="(clist,i) in item.list" :key="i" @tap="toCity(clist.nm,clist.id)">{{clist.nm}}</li>
+                                
+                            </ul>
+                        </div>	
+                    </div>
+                </div>
+            </Scroller>
         </div>
         <div class="city_index">
             <ul>
-                <li v-for="(item,i) in cityList" :key="i" @touchstart="toIndex(i)">{{item.index}}</li>
+                <li v-for="(item,i) in cityList" :key="i" @touchstart="toIndex(i)" >{{item.index}}</li>
                 
             </ul>
         </div>
@@ -33,26 +38,37 @@ export default {
     data() {
         return {
             cityList:[],
-            hotList:[]
+            hotList:[],
+            isLoading:true
         }
     },
     mounted() {
-        
-        this.axios.get('/api/cityList').then((data)=>{
-            //console.log(data)
-            var msg = data.data.msg;
-            //console.log(msg)
-            //console.log(data.data.data.cities);
-            if (msg === 'ok' ) {
-                var cities = data.data.data.cities;
-                //[ {index:'A',list:[{nm:'阿拉善',id:111}] } ]
-                var {cityList,hotList} = this.formatCityList(cities)
-                this.cityList = cityList;
-                this.hotList = hotList;
-            }
-            console.log(this.cityList);
-        })
-        
+
+        var cityList = window.localStorage.getItem('cityList')
+        var hotList = window.localStorage.getItem('hotList')
+        if(cityList && hotList){
+            this.cityList = JSON.parse(cityList);
+            this.hotList = JSON.parse(hotList);
+            this.isLoading = false;
+        }else{
+            this.axios.get('/api/cityList').then((data)=>{
+                //console.log(data)
+                var msg = data.data.msg;
+                //console.log(data.data.data.cities);
+                if (msg === 'ok' ) {
+                    this.isLoading = false
+                    var cities = data.data.data.cities;
+                    //[ {index:'A',list:[{nm:'阿拉善',id:111}] } ]想要的数据类型
+                    var {cityList,hotList} = this.formatCityList(cities)
+                    this.cityList = cityList;
+                    this.hotList = hotList;
+                    window.localStorage.setItem('cityList',JSON.stringify(cityList))
+                    window.localStorage.setItem('hotList',JSON.stringify(hotList))
+
+                }
+                //console.log(this.cityList);
+            })
+        }
     },
     methods: {
         formatCityList(cities){
@@ -107,8 +123,14 @@ export default {
         },
         toIndex(i){
             var h2 = this.$refs.citySort.getElementsByTagName('h2');
-            this.$refs.citySort.parentNode.scrollTop = h2[i].offsetTop;
-            //this.$refs.city_List.toScrollTop(-h2[i].offsetTop)
+            //this.$refs.citySort.parentNode.scrollTop = h2[i].offsetTop;
+            this.$refs.city_list.toScrollTop(-h2[i].offsetTop)
+        },
+        toCity(nm,id){
+            this.$store.commit('city/CITY_INFO',{nm,id})
+            window.localStorage.setItem('nowNm',nm)
+            window.localStorage.setItem('nowId',id)
+            this.$router.push('/movie/nowPlaying')
         }
     },
 }
