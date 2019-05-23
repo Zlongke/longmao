@@ -5,9 +5,11 @@ import store from './stores'
 import axios from 'axios'
 import Scroller from './components/Scroller'
 import Loading from './components/Loading'
+//import VueAwesomeSwiper from 'vue-awesome-swiper'
+//import 'swiper/dist/css/swiper.css'
 Vue.component('Scroller',Scroller)
 Vue.component('Loading',Loading)
-
+//Vue.use(VueAwesomeSwiper, /* { default global options } */)
 
 Vue.prototype.axios = axios;
 

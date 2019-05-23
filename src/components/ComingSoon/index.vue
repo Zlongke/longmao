@@ -4,9 +4,9 @@
         <Scroller v-else>
             <ul>
                 <li v-for="(item,i) in comingList" :key="i">
-                    <div class="pic_show"><img :src="item.img | setWH('128.180')"></div>
+                    <div @touchstart="toDetail(item.id)" class="pic_show"><img :src="item.img | setWH('128.180')"></div>
                     <div class="info_list">
-                        <h2>{{item.nm}} <img v-if="item.version" src="@/assets/maxs.png"/></h2>
+                        <h2 @touchstart="toDetail(item.id)">{{item.nm}} <img v-if="item.version" src="@/assets/maxs.png"/></h2>
                         <p><span class="person">{{item.wish}}</span> 人想看</p>
                         <p>{{item.star}}</p>
                         <p>{{item.showInfo}}</p>
@@ -46,6 +46,11 @@ export default {
                 this.prevCityId = cityId;
             }
         })
+    },
+    methods: {
+        toDetail(movieId){
+            this.$router.push('/movie/detail/2/'+movieId)
+        }
     },
 }
 </script>
