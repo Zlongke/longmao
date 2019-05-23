@@ -5,9 +5,9 @@
             <ul>
                 <li class="pullMsg">{{ pullMsg }}</li>
                 <li v-for="(item,i) in movieList" :key="i">
-                    <div class="pic_show" @tap="toDetail"><img :src="item.img | setWH('128.180') "></div>
+                    <div class="pic_show" @tap="toDetail(item.id)"><img :src="item.img | setWH('128.180') "></div>
                     <div class="info_list">
-                        <h2>{{item.nm}} <img v-if="item.version" src="@/assets/maxs.png" /></h2>
+                        <h2 @tap="toDetail(item.id)">{{item.nm}} <img v-if="item.version" src="@/assets/maxs.png" /></h2>
                         <p>观众评分 <span class="grade">{{item.sc}}</span></p>
                         <p>{{item.star}}</p>
                         <p>{{item.showInfo}}</p>
@@ -102,8 +102,9 @@ export default {
                 })
             }
         },
-        toDetail(){
-            console.log(111);
+        toDetail(movieId){
+            //console.log(movieId)
+            this.$router.push('/movie/detail/1/'+movieId)
         }
     },
 }

@@ -149,7 +149,7 @@ export default {
 .city_body .city_list{ 
     flex:1; 
     overflow: auto; 
-    background: #FFF5F0;
+    background: #fff;
     }
 .city_body .city_list::-webkit-scrollbar{
     background-color:transparent;
@@ -162,7 +162,7 @@ export default {
     padding-left: 15px; 
     line-height: 30px; 
     font-size: 14px; 
-    background:#F0F0F0; 
+    background:#f0f0f0; 
     font-weight: normal;
     }
 .city_body .city_hot ul li{ 
@@ -178,6 +178,7 @@ export default {
     line-height: 33px; 
     text-align: center; 
     box-sizing: border-box;
+    
     }
 .city_body .city_sort div{ 
     margin-top: 20px;
@@ -186,7 +187,7 @@ export default {
     padding-left: 15px; 
     line-height: 30px; 
     font-size: 14px; 
-    background:#F0F0F0; 
+    background:#f0f0f0; 
     font-weight: normal;
     }
 .city_body .city_sort ul{ 
@@ -194,8 +195,7 @@ export default {
     margin-top: 10px;
     }
 .city_body .city_sort ul li{ 
-    line-height: 30px; 
-    line-height: 30px;
+    line-height: 35px; 
     }
 .city_body .city_index{ 
     width:20px; 
@@ -205,4 +205,5 @@ export default {
     text-align: center; 
     border-left:1px #e6e6e6 solid;
     }
+
 </style>
