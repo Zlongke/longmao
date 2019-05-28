@@ -32,7 +32,7 @@
                 <ul class="swiper-wrapper">
 					<li class="swiper-slide" v-for="(item,i) in detailMovie.photos" :key="i">
 						<div>
-							<img :src="item | setWH('200.112')" alt="">
+							<img :src="item | setWH('400.200')" alt="" @click="toImg(i)">
 						</div>
 					</li>
 				</ul>
@@ -49,6 +49,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import { ImagePreview } from 'vant';
+Vue.use(ImagePreview);
 import Header from '@/components/Header';
 export default {
     name:'Detail',
@@ -65,6 +68,20 @@ export default {
     methods: {
         toBack(){
             this.$router.go(-1)
+        },
+        toImg(i){
+            var photos = this.detailMovie.photos
+            var setPhotos = []
+            for (let i = 0; i < photos.length; i++) {
+                setPhotos.push(photos[i].replace(/w\.h/,200.112))
+                
+            }
+            console.log(i)
+            ImagePreview({
+                images: setPhotos,
+                startPosition: i,
+                
+            });
         }
     },
     mounted() {
@@ -78,7 +95,9 @@ export default {
                     new Swiper(this.$refs.detail_player,{
                         slidesPerView : "auto",
                         freeMode : true,
-                        freeModeSticky: true
+                        freeModeSticky: true,
+                        slideToClickedSlide:true,
+                        
                     })
                 })
             }
@@ -86,6 +105,7 @@ export default {
         })
         
     },
+   
 }
 </script>
 
@@ -98,8 +118,8 @@ export default {
 }
 #content{margin-bottom: 0;display: block;}
 #content .detail_list{ height:200px; width:100%; position: relative;overflow: hidden;}
-.detail_list .detail_list_bg{ width:100%; height:100%; background: 0 40%; filter: blur(20px); background-size:cover; position: absolute; left: 0; top: 0;}
-.detail_list .detail_list_filter{ width:100%; height:100%; position: absolute;background-color: #40454d;opacity: .3; position: absolute; left: 0; top: 0; z-index: 1;}
+.detail_list .detail_list_bg{ width:100%; height:100%; background: 0 40%; filter: blur(20px); background-size:cover; position: absolute; left: 0; top: 0;border-radius: 0 0 30% 30%;}
+.detail_list .detail_list_filter{ width:100%; height:100%; position: absolute;background-color: #40454d;opacity: .3; position: absolute; left: 0; top: 0; z-index: 1;border-radius: 0 0 30% 30%;}
 .detail_list .detail_list_content{ display: flex; width:100%; height:100%; position: absolute; left: 0; top: 0; z-index: 2;}
 .detail_list .detail_list_img{ width:108px; height: 150px; border: solid 1px #f0f2f3; margin:20px;}
 .detail_list .detail_list_img img{ width:100%; height: 100%;}
